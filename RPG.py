@@ -6,18 +6,18 @@ win = pygame.display.set_mode((500,500))
 pygame.display.set_caption("Survivle RPG")
 # animation
 
-walkUp = [pygame.image.load('Sprites/Spriteup2.png'), pygame.image.load('Sprites/spriteup3.png'), pygame.image.load('Sprites/spriteup4.png'), pygame.image.load('Sprites/spriteup5.png'), pygame.image.load('Sprites/spriteup6.png'), pygame.image.load('Sprites/spriteup7.png'), pygame.image.load('Sprites/spriteup8.png'), pygame.image.load('Sprites/spriteup9.png'), pygame.image.load('Sprites/spriteup10.png')]
-walkDown = [pygame.image.load('Sprites/spritedown1.png'), pygame.image.load('Sprites/spritedown2.png'), pygame.image.load('Sprites/spritedown3.png'), pygame.image.load('Sprites/spritedown4.png'), pygame.image.load('Sprites/spritedown5.png'), pygame.image.load('Sprites/spritedown6.png'), pygame.image.load('Sprites/spritedown7.png'), pygame.image.load('Sprites/spritedown8.png'), pygame.image.load('Sprites/spritedown9.png')]
+walkUp = [pygame.image.load('Sprites/characterup1.png'), pygame.image.load('Sprites/characterup2.png'), pygame.image.load('Sprites/characterup3.png'), pygame.image.load('Sprites/characterup4.png'), pygame.image.load('Sprites/characterup5.png'), pygame.image.load('Sprites/characterup6.png'), pygame.image.load('Sprites/characterup7.png'), pygame.image.load('Sprites/characterup8.png'), pygame.image.load('Sprites/characterup9.png')]
+walkDown = [pygame.image.load('Sprites/character1.png'), pygame.image.load('Sprites/character2.png'), pygame.image.load('Sprites/character3.png'), pygame.image.load('Sprites/character4.png'), pygame.image.load('Sprites/character5.png'), pygame.image.load('Sprites/character6.png'), pygame.image.load('Sprites/character7.png'), pygame.image.load('Sprites/character8.png'), pygame.image.load('Sprites/character9.png')]
 walkLeft = [pygame.image.load('Sprites/Spriteup2.png'), pygame.image.load('Sprites/spriteup3.png'), pygame.image.load('Sprites/spriteup4.png'), pygame.image.load('Sprites/spriteup5.png'), pygame.image.load('Sprites/spriteup6.png'), pygame.image.load('Sprites/spriteup7.png'), pygame.image.load('Sprites/spriteup8.png'), pygame.image.load('Sprites/spriteup9.png'), pygame.image.load('Sprites/spriteup10.png')]
 walkRight = [pygame.image.load('Sprites/spritedown1.png'), pygame.image.load('Sprites/spritedown2.png'), pygame.image.load('Sprites/spritedown3.png'), pygame.image.load('Sprites/spritedown4.png'), pygame.image.load('Sprites/spritedown5.png'), pygame.image.load('Sprites/spritedown6.png'), pygame.image.load('Sprites/spritedown7.png'), pygame.image.load('Sprites/spritedown8.png'), pygame.image.load('Sprites/spritedown9.png')]
-char = pygame.image.load('Sprites/spriteup1.png')
+char = pygame.image.load('Sprites/character.png')
 #Bg = pygame.image.load('green.jpg')
 sbar = [pygame.image.load('Sprites/stamina1.png'), pygame.image.load('Sprites/stamina2.png'), pygame.image.load('Sprites/stamina3.png'), pygame.image.load('Sprites/stamina4.png'), pygame.image.load('Sprites/stamina5.png'), pygame.image.load('Sprites/stamina6.png'), pygame.image.load('Sprites/stamina7.png'), pygame.image.load('Sprites/stamina8.png'), pygame.image.load('Sprites/stamina9.png'),pygame.image.load('Sprites/stamina10.png')]
 # variables
 x = 50
 y = 400
-width = 92
-height = 92
+width = 64
+height = 64
 vel = 5
 boost = 1.5
 up = False
@@ -27,6 +27,12 @@ right = False
 walkcount = 0
 stamina = 100
 clock = pygame.time.Clock()
+#player class
+
+
+
+
+
 #drawing
 #def leval in the class wall
 class Wall(object):
@@ -37,26 +43,26 @@ walls = []
 #player = Player()
 #leval drawn with W
 level = [
-"WWWWWWW        WWWWWWWWWWWWWWWW",
-"WWWWWWW             WWWWWWWWWWWW",
-"WWWWWWW             WWWWWWWWWWWW",
-"WWWWWWW             WWWWWWWWWWWW",
-"WWWWWWW             WWWWWWWWWWWW",
-"WWWWWWW             WWWWWWWWWWWW",
-"WWWWWWWWWW          WWWWWWWWWWWW",
-"WWWWWWWWWWWWW            WWWWWWW",
-"WWWWWWWWWWWWWWW          WWWWWWW",
-"WWWWWWWWWWWWWWW          WWWWWWW",
-"WWWWWWWWWWWWWWW          WWWWWWW",
-"WWWWWWWWWWWW             WWWWWWW",
-"WWWWWWWWWWWW          WWWWWWWWWW",
-"WWWWWWWWWWWW          WWWWWWWWWW",
-"WWWWWWWWWWWWW         WWWWWWWWWW",
-"WWWWWWWWWWW           WWWWWWWWWW",
-"WWWWWWWW              WWWWWWWWWW",
-"WWWWWWWWWW            WWWWWWWWWW",
-"WWWWWWWWWW           WWWWWWWWWWW",
-"WWWWWWWWW            WWWWWWWWWWW",
+"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
 "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
 "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
 "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
@@ -233,7 +239,7 @@ while run:
     #giveing the leval color
     win.fill((255,0,0))
     for wall in walls:
-        pygame.draw.rect(win, (0,0,255), wall.rect)
+        pygame.draw.rect(win, (128,128,128), wall.rect)
     pygame.display.flip()
     
     redrawGameWindow()
