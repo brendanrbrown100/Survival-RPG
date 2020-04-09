@@ -1,23 +1,16 @@
 import pygame
 import os
 import random
-#make windown
-win = pygame.display.set_mode((500,500))
-pygame.display.set_caption("Survivle RPG")
-# animation
-
-walkUp = [pygame.image.load('Sprites/characterup1.png'), pygame.image.load('Sprites/characterup2.png'), pygame.image.load('Sprites/characterup3.png'), pygame.image.load('Sprites/characterup4.png'), pygame.image.load('Sprites/characterup5.png'), pygame.image.load('Sprites/characterup6.png'), pygame.image.load('Sprites/characterup7.png'), pygame.image.load('Sprites/characterup8.png'), pygame.image.load('Sprites/characterup9.png')]
-walkDown = [pygame.image.load('Sprites/character1.png'), pygame.image.load('Sprites/character2.png'), pygame.image.load('Sprites/character3.png'), pygame.image.load('Sprites/character4.png'), pygame.image.load('Sprites/character5.png'), pygame.image.load('Sprites/character6.png'), pygame.image.load('Sprites/character7.png'), pygame.image.load('Sprites/character8.png'), pygame.image.load('Sprites/character9.png')]
-walkLeft = [pygame.image.load('Sprites/Spriteup2.png'), pygame.image.load('Sprites/spriteup3.png'), pygame.image.load('Sprites/spriteup4.png'), pygame.image.load('Sprites/spriteup5.png'), pygame.image.load('Sprites/spriteup6.png'), pygame.image.load('Sprites/spriteup7.png'), pygame.image.load('Sprites/spriteup8.png'), pygame.image.load('Sprites/spriteup9.png'), pygame.image.load('Sprites/spriteup10.png')]
-walkRight = [pygame.image.load('Sprites/spritedown1.png'), pygame.image.load('Sprites/spritedown2.png'), pygame.image.load('Sprites/spritedown3.png'), pygame.image.load('Sprites/spritedown4.png'), pygame.image.load('Sprites/spritedown5.png'), pygame.image.load('Sprites/spritedown6.png'), pygame.image.load('Sprites/spritedown7.png'), pygame.image.load('Sprites/spritedown8.png'), pygame.image.load('Sprites/spritedown9.png')]
-char = pygame.image.load('Sprites/character.png')
-#Bg = pygame.image.load('green.jpg')
-sbar = [pygame.image.load('Sprites/stamina1.png'), pygame.image.load('Sprites/stamina2.png'), pygame.image.load('Sprites/stamina3.png'), pygame.image.load('Sprites/stamina4.png'), pygame.image.load('Sprites/stamina5.png'), pygame.image.load('Sprites/stamina6.png'), pygame.image.load('Sprites/stamina7.png'), pygame.image.load('Sprites/stamina8.png'), pygame.image.load('Sprites/stamina9.png'),pygame.image.load('Sprites/stamina10.png')]
+from pygame.locals import *
 # variables
+test = pygame.Rect(300,100,50,50)
 x = 50
 y = 400
 width = 64
 height = 64
+window_height = 500
+window_width = 500
+wall_size = 50
 vel = 5
 boost = 1.5
 up = False
@@ -26,71 +19,46 @@ left = False
 right = False
 walkcount = 0
 stamina = 100
-clock = pygame.time.Clock()
-#player class
+health = 100
+red = (255,0,0)
+green = (0,255,0)
+blue = (0,0,255)
+#make windown
+win = pygame.display.set_mode((window_height,window_width))
+pygame.display.set_caption("Survivle RPG")
+# animation
 
-
-
-
-
-#drawing
-#def leval in the class wall
-class Wall(object):
-    def __init__(self, pos):    
-        walls.append(self)
-        self.rect = pygame.Rect(pos[0],pos[1],25,25)
+walkUp = [pygame.image.load('Sprites/characterup1.png'), pygame.image.load('Sprites/characterup2.png'), pygame.image.load('Sprites/characterup3.png'), pygame.image.load('Sprites/characterup4.png'), pygame.image.load('Sprites/characterup5.png'), pygame.image.load('Sprites/characterup6.png'), pygame.image.load('Sprites/characterup7.png'), pygame.image.load('Sprites/characterup8.png'), pygame.image.load('Sprites/characterup9.png')]
+walkDown = [pygame.image.load('Sprites/character1.png'), pygame.image.load('Sprites/character2.png'), pygame.image.load('Sprites/character3.png'), pygame.image.load('Sprites/character4.png'), pygame.image.load('Sprites/character5.png'), pygame.image.load('Sprites/character6.png'), pygame.image.load('Sprites/character7.png'), pygame.image.load('Sprites/character8.png'), pygame.image.load('Sprites/character9.png')]
+walkLeft = [pygame.image.load('Sprites/characterup1.png'), pygame.image.load('Sprites/characterup2.png'), pygame.image.load('Sprites/characterup3.png'), pygame.image.load('Sprites/characterup4.png'), pygame.image.load('Sprites/characterup5.png'), pygame.image.load('Sprites/characterup6.png'), pygame.image.load('Sprites/characterup7.png'), pygame.image.load('Sprites/characterup8.png'), pygame.image.load('Sprites/characterup9.png')]
+walkRight = [pygame.image.load('Sprites/character1.png'), pygame.image.load('Sprites/character2.png'), pygame.image.load('Sprites/character3.png'), pygame.image.load('Sprites/character4.png'), pygame.image.load('Sprites/character5.png'), pygame.image.load('Sprites/character6.png'), pygame.image.load('Sprites/character7.png'), pygame.image.load('Sprites/character8.png'), pygame.image.load('Sprites/character9.png')]
+char = pygame.image.load('Sprites/character.png')
+#Bg = pygame.image.load('green.jpg')
+sbar = [pygame.image.load('Sprites/stamina1.png'), pygame.image.load('Sprites/stamina2.png'), pygame.image.load('Sprites/stamina3.png'), pygame.image.load('Sprites/stamina4.png'), pygame.image.load('Sprites/stamina5.png'), pygame.image.load('Sprites/stamina6.png'), pygame.image.load('Sprites/stamina7.png'), pygame.image.load('Sprites/stamina8.png'), pygame.image.load('Sprites/stamina9.png'),pygame.image.load('Sprites/stamina10.png')]
+hbar = [pygame.image.load('Sprites/health1.png'), pygame.image.load('Sprites/health2.png'), pygame.image.load('Sprites/health3.png'), pygame.image.load('Sprites/health4.png'), pygame.image.load('Sprites/health5.png'), pygame.image.load('Sprites/health6.png'), pygame.image.load('Sprites/health7.png')]
 walls = []
-#player = Player()
-#leval drawn with W
-level = [
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-]
-#drawing the leval
-x = y = 0
-for row in level:
-    for col in row:
-        if col == "W":
-            Wall((x,y))
+player = Player()
+for i in range(10):
+    walls.append(pygame.Rect(random.randint(0, window_width - wall_size),
+    random.randint(0,window_height - wall_size), wall_size, wall_size))
+    
+class Player(object):
+    
+    def move(self, dx, dy):
+        
 
-        #if col == "E":
-            #end_rect = pygame.Rect(x, y, 16, 16)
 
-        x += 16
 
-    y += 16
-    x = 0
+class Wall(object):
+
+    def __init__(self, pos):
+        walls.append(self)
+        self.rect = pygame.Rect(pos[0],pos[1], 16, 16)
+
+
+    
+    
+clock = pygame.time.Clock()
 def redrawGameWindow():
     global walkcount
     
@@ -117,48 +85,76 @@ def redrawGameWindow():
         walkcount = 0
     #for when the stamina bar goes up or down 
     if stamina == 100:
-        win.blit(sbar[9], (25,25))
+        win.blit(sbar[9], (25,65))
 
     elif stamina < 100 and stamina >= 79:
-        win.blit(sbar[8], (25,25))
+        win.blit(sbar[8], (25,65))
 
     elif stamina < 79 and stamina >= 69:
-        win.blit(sbar[7], (25,25))
+        win.blit(sbar[7], (25,65))
 
     elif stamina < 69 and stamina >= 58:
-        win.blit(sbar[6], (25,25))
+        win.blit(sbar[6], (25,65))
 
     elif stamina < 58 and stamina >= 47:
-        win.blit(sbar[5], (25,25))
+        win.blit(sbar[5], (25,65))
 
     elif stamina < 47 and stamina >= 36:
-        win.blit(sbar[4], (25,25))
+        win.blit(sbar[4], (25,65))
 
     elif stamina < 36 and stamina >= 25:
-        win.blit(sbar[3], (25,25))
+        win.blit(sbar[3], (25,65))
 
     elif stamina < 25 and stamina >= 14:
-        win.blit(sbar[2], (25,25))
+        win.blit(sbar[2], (25,65))
 
     elif stamina < 14 and stamina >= 1:
-        win.blit(sbar[1], (25,25))
+        win.blit(sbar[1], (25,65))
 
     else:
-        win.blit(sbar[0], (25,25))
-    
+        win.blit(sbar[0], (25,65))
+
+    #health bar going down, or up
+
+    if health == 100:
+        win.blit(hbar[6], (25, 25))
+
+    elif health < 100 and health >= 80:
+        win.blit(hbar[5], (25,25))
+
+    elif health < 80 and health >= 60:
+        win.blit(hbar[4], (25,25))
+
+    elif health < 60 and health >= 40:
+        win.blit(hbar[3], (25,25))
+
+    elif health < 40 and health >= 20:
+        win.blit(hbar[2], (25,25))
+
+    elif health < 20 and health >= 1:
+        win.blit(hbar[1], (25,25))
+        
+    else:
+        win.blit(hbar[0], (25,25))
+        
+    for i in range(len(walls)):
+        pygame.draw.rect(win,blue,walls[i])
+    pygame.draw.rect(win,red,test)
 
     pygame.display.update()
 #making a while loop
 run = True
 while run:
     #speed of refreash
-    clock.tick(27)
+    clock.tick(16)
     #making code close if x is clicked
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-    #holding keys down when moving
     keys = pygame.key.get_pressed()
+    for wall in walls[:]:
+        if test.colliderect(wall):
+            walls.remove(wall)
     #useing keys to move in the code
     if keys[pygame.K_w] and keys[pygame.K_LSHIFT]:
         if stamina > 10:
@@ -235,13 +231,10 @@ while run:
         walkcount = 0
         if stamina < 100:
             stamina += 1
+    win.fill(green)
     #calling redrawGameWindow function
     #giveing the leval color
-    win.fill((255,0,0))
-    for wall in walls:
-        pygame.draw.rect(win, (128,128,128), wall.rect)
-    pygame.display.flip()
-    
+        
     redrawGameWindow()
 #end code
 pygame.quit()
