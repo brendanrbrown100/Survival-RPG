@@ -2,20 +2,53 @@ import os
 import random
 import pygame
 import sys
+import math
+import Enemi
 # Variables
-
-test = pygame.Rect(300,100,50,50)
 x = 50
 y = 400
+speed = 4
+speed_run = 6.5
+fps = 25
 window_height = 500
 window_width = 500
 cant_run = False
-stamina = 100
+
 red = (255,0,0)
 green = (0, 255, 0)
 blue = (0, 0, 255)
-black = (255, 255, 255)
+black = (0, 0, 0)
 clock = pygame.time.Clock()
+
+#stamina
+running = False
+stamina = 100
+stamina_max= 100
+stamina_mid = 50
+stamina_consumption = 1
+stamina_regen = 1
+stamina_walk_regen = .5
+
+#helth
+hp = 100
+maxhp = 100
+regenhp = 25
+
+#character variables
+mini = 0 
+hngr = 0
+hngr_max = 100
+hngr_reduce = mini
+thrst = 0
+thrst_max = 100
+thrst_reduce = mini
+trist_damage = 2
+hngr_damage = 2
+double_damage = 4
+hngr_rise = .15
+tirst_rise = .1
+hp_increace = 100
+
 
 #Initialize Sprites
 
@@ -25,18 +58,94 @@ walkDown = [pygame.image.load('d1.png'), pygame.image.load('d2.png'), pygame.ima
 walkLeft = [pygame.image.load('l1.png'), pygame.image.load('l2.png'), pygame.image.load('l3.png'), pygame.image.load('l4.png'), pygame.image.load('l5.png'), pygame.image.load('l6.png')]
 walkRight = [pygame.image.load('r1.png'), pygame.image.load('r2.png'), pygame.image.load('r3.png'), pygame.image.load('r4.png'), pygame.image.load('r5.png'), pygame.image.load('r6.png')]
 char = pygame.image.load('d1.png')
-sbar = [pygame.image.load('stamina1.png'), pygame.image.load('stamina2.png'), pygame.image.load('stamina3.png'), pygame.image.load('stamina4.png'), pygame.image.load('stamina5.png'), pygame.image.load('stamina6.png'), pygame.image.load('stamina7.png'), pygame.image.load('stamina8.png'), pygame.image.load('stamina9.png'), pygame.image.load('stamina10.png')]
+#stamina sprite
+sbar = [pygame.image.load('stamina1.png'), pygame.image.load('stamina2.png'), pygame.image.load('stamina4.png'), pygame.image.load('stamina6.png'), pygame.image.load('stamina7.png'), pygame.image.load('stamina9.png'), pygame.image.load('stamina10.png')]
+#health sprite
 hbar = [pygame.image.load('health1.png'), pygame.image.load('health2.png'), pygame.image.load('health3.png'), pygame.image.load('health4.png'), pygame.image.load('health5.png'), pygame.image.load('health6.png'), pygame.image.load('health7.png')]
-animRight = ['r1.png', 'r2.png', 'r3.png', 'r4.png', 'r5.png', 'r6.png']
+#hungry sprite
+hngrbar = [pygame.image.load('health1.png'), pygame.image.load('health2.png'), pygame.image.load('health3.png'), pygame.image.load('health4.png'), pygame.image.load('health5.png'), pygame.image.load('health6.png'), pygame.image.load('health7.png')]
+#thirst sprite
+tbar = [pygame.image.load('health1.png'), pygame.image.load('health2.png'), pygame.image.load('health3.png'), pygame.image.load('health4.png'), pygame.image.load('health5.png'), pygame.image.load('health6.png'), pygame.image.load('health7.png')]
 
-# Class for the orange dude
+# Class for the orange dude 
 
 class Player(pygame.sprite.Sprite):
     
     def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("d1.png")
+        super(Player, self).__init__()
+        self.images_down = []
+        self.images_up = []
+        self.images_right = []
+        self.images_left = []
+        self.images_char = []
+
+        
+        self.images_down.append(pygame.image.load('d1.png'))
+        self.images_down.append(pygame.image.load('d2.png'))
+        self.images_down.append(pygame.image.load('d3.png'))
+        self.images_down.append(pygame.image.load('d4.png'))
+        self.images_down.append(pygame.image.load('d5.png'))
+        self.images_down.append(pygame.image.load('d6.png'))  
+                
+        
+        self.images_up.append(pygame.image.load('u1.png'))
+        self.images_up.append(pygame.image.load('u2.png'))
+        self.images_up.append(pygame.image.load('u3.png'))
+        self.images_up.append(pygame.image.load('u4.png'))
+        self.images_up.append(pygame.image.load('u5.png'))
+        self.images_up.append(pygame.image.load('u6.png'))
+
+        self.images_right.append(pygame.image.load('r1.png'))
+        self.images_right.append(pygame.image.load('r2.png'))
+        self.images_right.append(pygame.image.load('r3.png'))
+        self.images_right.append(pygame.image.load('r4.png'))
+        self.images_right.append(pygame.image.load('r5.png'))
+        self.images_right.append(pygame.image.load('r6.png'))
+
+        self.images_left.append(pygame.image.load('l1.png'))
+        self.images_left.append(pygame.image.load('l2.png'))
+        self.images_left.append(pygame.image.load('l3.png'))
+        self.images_left.append(pygame.image.load('l4.png'))
+        self.images_left.append(pygame.image.load('l5.png'))
+        self.images_left.append(pygame.image.load('l6.png'))        
+
+        self.images_char.append(pygame.image.load('d1.png'))
+        
+
+        
+        self.index = 0
+        self.image = self.images_down[self.index]
         self.rect = self.image.get_rect()
+        self.hngr = hngr
+        self.thrst = thrst
+        self.hngr_max = hngr_max
+        self.thist_max = thrst_max
+    def update(self):
+        self.index += 1
+        if key[pygame.K_s]:
+            if self.index >= len(self.images_down):
+                self.index = 0
+            self.image = self.images_down[self.index]
+        elif key[pygame.K_a]:
+            if self.index >= len(self.images_left):
+                self.index = 0
+            self.image = self.images_left[self.index]
+        elif key[pygame.K_w]:
+            if self.index >= len(self.images_up):
+                self.index = 0
+            self.image = self.images_up[self.index]
+        elif key[pygame.K_d]:
+            if self.index >= len(self.images_right):
+                self.index = 0
+            self.image = self.images_right[self.index]
+
+        else:
+            if self.index >= len(self.images_char):
+                self.index = 0
+            self.image = self.images_char[self.index]
+
+
+
         
     def move(self, dx, dy):
         # Move each axis separately. Note that this checks for collisions both times.
@@ -46,6 +155,7 @@ class Player(pygame.sprite.Sprite):
             self.move_single_axis(0, dy)
             
     def move_single_axis(self, dx, dy):
+        global hngr, thrst, hp
         # Move the rect
 
         self.rect.x += dx
@@ -54,6 +164,7 @@ class Player(pygame.sprite.Sprite):
         # If you collide with a wall, move out based on velocity
 
         for wall in walls:
+            
             if self.rect.colliderect(wall.rect):
 
                 if dx > 0: # Moving right; Hit the left side of the wall
@@ -64,7 +175,32 @@ class Player(pygame.sprite.Sprite):
                     self.rect.bottom = wall.rect.top
                 if dy < 0: # Moving up; Hit the bottom side of the wall
                     self.rect.top = wall.rect.bottom
-                    
+        if pygame.sprite.collide_rect (player,food):
+            food.rect.x = random.randint(20, 300)
+            food.rect.y = random.randint(20, 300)
+            hngr = hngr_reduce
+            if hngr < 0:
+                hngr = 0
+            print("You consumed food")
+            print (hngr)
+
+        if pygame.sprite.collide_rect (player,water):
+            water.rect.x = random.randint(20, 300)
+            water.rect.y = random.randint(20, 300)
+            thrst = thrst_reduce
+            if thrst < 0:
+                thrst = 0
+            print("You consumed water")
+            print (thrst)
+
+        if pygame.sprite.collide_rect (player,medkit):
+            medkit.rect.x = random.randint(20, 300)
+            medkit.rect.y = random.randint(20, 300)
+            hp = hp_increace
+            if hp > 100:
+                hp = 100
+            print("You consumed a health pack")
+            print (hp)
 # Nice class to hold a wall rect
 
 class Wall(object):
@@ -72,8 +208,50 @@ class Wall(object):
     def __init__(self, pos):
         walls.append(self)
         self.rect = pygame.Rect(pos[0], pos[1], 16, 16)
+
+class Enemy(object):
+    def __init__(self,x,y):
+        self.rect = pygame.Rect(300, 100, 32, 32)
+        self.rect.x = x
+        self.rect.y = y
+        self.speed = speed
+        self.vel = 3
+    
+    def move_towards_player(self,player, dx, dy):
+        dx, dy = player.rect.x - player.rect.y, player.rect.y - self.rect.y
+        dist =  math.hypot(dx, dy)
+        dx, dy = dx / dis, dy /dist # Normalize vector
+        self.rect.x += dx + self.speed
+        self.rect.y += dy + self.speed
+
+
+class Food(object):
+    def __init__(self,x,y):
+        self.rect = pygame.Rect(0,0,16,16)
+
+        self.rect.x = x
+        self.rect.y = y
+
+class Water(object):
+
+    def __init__(self, x, y):
+        self.rect = pygame.Rect(0,0, 16, 16)
+
+        self.rect.x = x
+        self.rect.y = y
+
+class Medkit(object):
+    
+    def __init__(self, x, y):
+        self.rect = pygame.Rect(0,0, 16, 16)
+
+        self.rect.x = x
+        self.rect.y = y
+
+        
         
 # Initialise pygame
+
 
 pygame.display.init()
 os.environ["SDL_VIDEO_CENTERED"] = "1"
@@ -85,12 +263,27 @@ backdrop = pygame.image.load(os.path.join('bg.jpg')).convert()
 backdropbox = win.get_rect()
 walls = [] # List to hold the walls
 player = Player() # Create the player
+enemy = Enemy(150,100) 
+food = Food(250,100)
+water = Water(100,100)
+medkit = Medkit(100, 150)
 player.rect.x = 0
 player.rect.y = 0
-player_list = pygame.sprite.Group()
-player_list.add(player)
+player_list = pygame.sprite.Group(player)
 level = [
 
+
+
+    
+
+"                              W",
+"                              W",
+"                              W",
+"                              W",
+"                              W",
+"                              W",
+"                              W",
+"                              W",
 "              WWWWWWWWWWWWWWWW",
 "                             W",
 "W         WWWWWW             W",
@@ -116,35 +309,38 @@ for row in level:
 #Animations
 
 def redrawGameWindow():
-    # Stamina UI Animation   
+    
+    # Stamina UI Animation  
 
-    if stamina >= 90:
-        win.blit(sbar[9], (25,10))
-    elif stamina < 90 and stamina >= 80:
-        win.blit(sbar[8], (25,10))
-    elif stamina < 80 and stamina >= 70:
-        win.blit(sbar[7], (25,10))
-    elif stamina < 70 and stamina >= 60:
-        win.blit(sbar[6], (25,10))
-    elif stamina < 60 and stamina >= 50:
-        win.blit(sbar[5], (25,10))
-    elif stamina < 50 and stamina >= 40:
-        win.blit(sbar[4], (25,10))
-    elif stamina < 40 and stamina > 30:
-        win.blit(sbar[3], (25,10))
-    elif stamina < 30 and stamina > 20:
-        win.blit(sbar[2], (25,10))
-    elif stamina < 20 and stamina > 10:
-        win.blit(sbar[1], (25,10))
-    else:
-        win.blit(sbar[0], (25,10))
+    def animateUI(var,spr, pos):
+
+        if var >= 95:
+            win.blit(spr[6], (pos,10))
+        elif var < 95 and var >= 70:
+            win.blit(spr[5], (pos,10))
+        elif var < 70 and var >= 56:
+            win.blit(spr[4], (pos,10))
+        elif var < 56 and var > 42:
+            win.blit(spr[3], (pos,10))
+        elif var < 42 and var > 28:
+            win.blit(spr[2], (pos,10))
+        elif var < 28 and var > 10:
+            win.blit(spr[1], (pos,10))
+        else:
+            win.blit(spr[0], (pos,10))
+    #health UI Animation
+    animateUI(stamina, sbar, 20)
+    animateUI(hp, hbar, 140)
+    animateUI(hngr, hngrbar, 260)
+    animateUI(thrst, tbar, 380)
     pygame.display.update()
 
 
 counter = 0
 run = True
 while run:
-    clock.tick(60)
+
+    clock.tick(fps)
     if stamina >= 100:
         cant_run = False
 
@@ -159,70 +355,100 @@ while run:
     key = pygame.key.get_pressed()
 
     if key[pygame.K_a] and key[pygame.K_LSHIFT] and stamina >= 1 and cant_run == False:#run left
-        player.move(-3.5, 0)
-        stamina -= .5
+        player.move(-speed_run, 0)
+        stamina -= stamina_consumption
         running = True
         
     elif key[pygame.K_d] and key[pygame.K_LSHIFT] and stamina >= 1 and cant_run == False:#run right
-        player.move(3.5, 0)
-        stamina -= .5
+        player.move(speed_run, 0)
+        stamina -= stamina_consumption
         running = True
         
     elif key[pygame.K_w] and key[pygame.K_LSHIFT] and stamina >= 1 and cant_run == False:#run up
-        player.move(0, -3.5)
-        stamina -= .5
+        player.move(0, -speed_run)
+        stamina -= stamina_consumption
         running = True
 
     elif key[pygame.K_s] and key[pygame.K_LSHIFT] and stamina >= 1 and cant_run == False:#run down
-        player.move(0, 3.5)
-        stamina -= .5
+        player.move(0, speed_run)
+        stamina -= stamina_consumption
         running = True
 
     elif key[pygame.K_a]:#walk left 
-        player.move(-2, 0)
+        player.move(-speed, 0)
         running = False
-        if stamina < 100 and running == False:
-            stamina += .2
-            if stamina <= 50:
+        if stamina < stamina_max and running == False:
+            stamina += stamina_walk_regen
+            if stamina <= stamina_mid:
                 cant_run = True
             else:
                 cant_run = False
 
     elif key[pygame.K_d]:#walk right
-        player.move(2, 0)
+        player.move(speed, 0)
         running = False
-        if stamina < 80 and running == False:
-            stamina += .2
-            if stamina <= 40:
+        if stamina < stamina_max and running == False:
+            stamina += stamina_walk_regen
+            if stamina <= stamina_mid:
                 cant_run = True
             else:
                 cant_run = False
     elif key[pygame.K_w]:#walk up
-        player.move(0, -2)
+        player.move(0, -speed)
         running = False
-        if stamina < 80 and running == False:
-            stamina += .2
-            if stamina <= 40:
+        if stamina < stamina_max and running == False:
+            stamina += stamina_walk_regen
+            if stamina <= stamina_mid:
                 cant_run = True
             else:
                 cant_run = False
     elif key[pygame.K_s]:#walk down
-        player.move(0, 2)
+        player.move(0, speed)
         running = False
-        if stamina < 80 and running == False:
-            stamina += .2
-            if stamina <= 40:
+        if stamina < stamina_max and running == False:
+            stamina += stamina_walk_regen
+            if stamina <= stamina_mid:
                 cant_run = True
             else:
                 cant_run = False
     else:
-        if stamina < 80:
-            stamina += 1
-    # Draw the scene
+        if stamina < stamina_max:
+            stamina += stamina_regen
+    #hunger and thirst bar
+    if hngr < hngr_max:
+        hngr += hngr_rise
+        if running == True:
+            hngr += hngr_rise*1.5
+    elif hngr > hngr_max:
+        hngr = hngr_max
+    elif running == True and hngr < hngr_max:
+        hngr += double_damage
 
+    if thrst < thrst_max:
+        thrst += tirst_rise
+        if running == True:
+            thrst += tirst_rise*1.5
+    elif thrst > thrst_max:
+        thrst = thrst_max
+    # health bar
+
+    if thrst == thrst_max:
+        hp -= trist_damage                                      
+    elif hngr == hngr_max:
+        hp -= hngr_damage
+    elif hngr == hngr_max and thrst == thrst_max:
+        hp -= double_damage
+        
+    
+    # Draw the scene
+    player_list.update()
     player_list.draw(win) #draw the player
+    #pygame.draw.rect(win, black, enemy)
     for wall in walls:
-        pygame.draw.rect(win, black , wall.rect)
+        pygame.draw.rect(win, blue , wall.rect)
+    pygame.draw.rect(win, green, food)
+    pygame.draw.rect(win, red, water)
+    pygame.draw.rect(win, red, medkit)
     redrawGameWindow()
     pygame.display.flip()
     win.blit(backdrop, backdropbox)
